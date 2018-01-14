@@ -1,0 +1,12 @@
+document.documentElement:returns the root element of the document
+window.devicePixelRatio:returns the ratio of the resolution in physical pixels to the resolution in css pixels
+radial-gradient(
+  size:((closest|farthest)-(side|corner))|shape===circle? len(radius : horizontal-axis vertical-axis)
+
+  shape:circle|ellipse
+  
+  position:at X-axis Y-axis
+  ,
+  colorStop:color percentage?,...,color percentage?
+  
+)
