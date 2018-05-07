@@ -13,7 +13,9 @@ gl.attachShader(program, vertexShader)
 //the procedure to initialize fragmentShader is analogous to the code of vertex shader showed above
 const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER)
 // ...
+//links the given program to the attached vertex shader and fragment shader
 gl.linkProgram(program)
+//sets the specified program as part of the current rendering state
 gl.useProgram(program)
 gl.clearColor(.0, .0, .0, 1.)
 gl.clear(gl.COLOR_BUFFER_BIT)
