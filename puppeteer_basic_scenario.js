@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer')
+const url = 'https://www.baidu.com' // url for instance
 ;(async () => {
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
