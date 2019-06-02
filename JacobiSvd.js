@@ -82,7 +82,7 @@ function JacobiSvd(A) {
           gamma += U[k][i] * U[k][j]
         }
         converge = Math.max(converge, Math.abs(gamma) / Math.sqrt(alpha * beta))
-        let zeta = (beta - alpha) / (2 * gamma)
+        let zeta = (beta - alpha) / ((2 * gamma) || Number.EPSILON)
         let t =
           (Math.sign(zeta) || 1) /
           (Math.abs(zeta) + Math.sqrt(1 + Math.pow(zeta, 2)))
