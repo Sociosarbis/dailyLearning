@@ -19,7 +19,6 @@ export default function extractFrames(buffer, options) {
   screen.height = gifReader.height
   const ctx = screen.getContext('2d')
   let index = 0
-  let next
   function getImageData(i) {
     return new Promise(function(res) {
       const pixels = new Uint8ClampedArray(
