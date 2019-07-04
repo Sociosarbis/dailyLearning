@@ -16,3 +16,4 @@ Copies count bytes from the object pointed to by src to the object pointed to by
 ```c++
 void* memcpy( void* dest, const void* src, std::size_t count );
 ```
+以上方法皆是将count个bytes以8bit为offset为0，步长为8bits填入
