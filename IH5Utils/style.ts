@@ -57,5 +57,6 @@ function mapFontLevelToSizeAndHeight(i: number) {
 
 
 export {
-  calcContrast
+  calcContrast,
+  mapFontLevelToSizeAndHeight
 }
