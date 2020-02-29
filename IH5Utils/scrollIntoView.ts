@@ -42,82 +42,90 @@ const axes: { [axis: string]: AxisPropNameMap } = {
   }
 }
 
-function scrollIntoView(
+type Position = {
+  x: Number,
+  y: Number
+}
+
+export default function scrollIntoView(
   el: HTMLElement,
-  padding = { top: 10, bottom: 10, left: 10, right: 10 }
+  target= {} as Position
 ) {
-  let cur = el.parentElement
-  const rect = el.getBoundingClientRect()
+  let cur = el.parentElement;
+  const rect = el.getBoundingClientRect();
+  target.x = target.x || rect.left;
+  target.y = target.y || rect.top;
   let ctx = ['x', 'y'].reduce(function(acc, axis) {
-    var axisInfo = axes[axis]
-    acc[axisInfo.start] = rect[axisInfo.start] - padding[axisInfo.start]
+    var axisInfo = axes[axis];
+    acc[axisInfo.start] = rect[axisInfo.start];
     acc[axisInfo.scalar] =
-      rect[axisInfo.scalar] + padding[axisInfo.start] + padding[axisInfo.end]
-    return acc
-  }, {} as ElementContext)
+            rect[axisInfo.scalar];
+    return acc;
+  }, {}) as ElementContext;
   while (cur) {
-    const computedStyle = getComputedStyle(cur)
-    const curRect = cur.getBoundingClientRect()
+    const computedStyle = getComputedStyle(cur);
+    const curRect = cur.getBoundingClientRect();
     const scrollDist = ['x', 'y'].reduce(
       function(acc, axis, index) {
-        var axisInfo = axes[axis]
-        var overflow = computedStyle[axisInfo.overflow]
+        var axisInfo = axes[axis];
+        var overflow = computedStyle[axisInfo.overflow];
         if (
           overflow !== 'visible' &&
-          overflow !== 'hidden' &&
-          cur[axisInfo.scrollScalar] > cur[axisInfo.clientScalar]
+                    overflow !== 'hidden' &&
+                    cur[axisInfo.scrollScalar] > cur[axisInfo.clientScalar]
         ) {
           const curRectStart =
-            curRect[axisInfo.start] +
-            parseFloat(computedStyle[axisInfo.borderWidth])
-          const curRectEnd = curRectStart + cur[axisInfo.clientScalar]
+                        curRect[axisInfo.start] +
+                        parseFloat(computedStyle[axisInfo.borderWidth]);
+          const curRectEnd = curRectStart + cur[axisInfo.clientScalar];
           const maxScroll =
-            cur[axisInfo.scrollScalar] - cur[axisInfo.clientScalar]
-          const delta = maxScroll - cur[axisInfo.scroll]
-          const startDelta = ctx[axisInfo.start] - curRectStart
-          const endDelta =
-            ctx[axisInfo.start] + ctx[axisInfo.scalar] - curRectEnd
-          if (startDelta < 0) {
-            if (cur[axisInfo.scroll] > 0) {
-              const scrollDist =
-                -startDelta > cur[axisInfo.scroll]
-                  ? -cur[axisInfo.scroll]
-                  : startDelta
-              acc[index] = scrollDist
-              ctx[axisInfo.start] -= scrollDist
-            }
-          } else if (endDelta > 0) {
+                        cur[axisInfo.scrollScalar] - cur[axisInfo.clientScalar];
+          const delta = maxScroll - cur[axisInfo.scroll];
+          const deltaToTarget = target[axis] - ctx[axisInfo.start];
+          let startDelta = ctx[axisInfo.start] - curRectStart;
+          let endDelta =
+            ctx[axisInfo.start] + ctx[axisInfo.scalar] - curRectEnd;
+          if (startDelta < 0 || endDelta <= 0) {
+            startDelta = Math.min(Math.max(-deltaToTarget, endDelta), startDelta);
+            let scrollDist =
+                                -startDelta > cur[axisInfo.scroll]
+                                  ? -cur[axisInfo.scroll]
+                                  : startDelta;
+            acc[index] = scrollDist;
+            ctx[axisInfo.start] -= scrollDist;
+          } else {
             if (delta > 0) {
-              const scrollDist = endDelta > delta ? delta : endDelta
-              acc[index] = scrollDist
-              ctx[axisInfo.start] -= scrollDist
+              endDelta = Math.max(Math.max(-deltaToTarget, startDelta), endDelta);
+              const scrollDist = endDelta > delta ? delta : endDelta;
+              acc[index] = scrollDist;
+              ctx[axisInfo.start] -= scrollDist;
             }
           }
         }
-        return acc
+        return acc;
       },
       [0, 0]
-    )
-    cur.scrollBy(scrollDist[0], scrollDist[1])
-    cur = cur.parentElement
+    );
+    cur.scrollBy(scrollDist[0], scrollDist[1]);
+    cur = cur.parentElement;
   }
   const scrollDist = ['x', 'y'].reduce(
     function(acc, axis, index) {
-      const axisInfo = axes[axis]
+      const axisInfo = axes[axis];
       if (ctx[axisInfo.start] < 0) {
-        acc[index] = ctx[axisInfo.start]
+        acc[index] = ctx[axisInfo.start];
       } else if (
         ctx[axisInfo.start] + ctx[axisInfo.scalar] >
-        window[axisInfo.windowScalar]
+                window[axisInfo.windowScalar]
       ) {
         acc[index] =
-          ctx[axisInfo.start] +
-          ctx[axisInfo.scalar] -
-          window[axisInfo.windowScalar]
+                    ctx[axisInfo.start] +
+                    ctx[axisInfo.scalar] -
+                    window[axisInfo.windowScalar];
       }
-      return acc
+      return acc;
     },
     [0, 0]
-  )
-  window.scrollBy(scrollDist[0], scrollDist[1])
+  );
+  window.scrollBy(scrollDist[0], scrollDist[1]);
 }
