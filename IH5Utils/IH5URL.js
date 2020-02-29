@@ -14,7 +14,7 @@ export class Ih5URL {
     if (urlParsedResult && (protocol === 'http:' || protocol === 'https:')) {
       this.isValid = true
       this.protocol = protocol
-      this.host = urlParsedResult[2].toLowerCase()
+      this.host = (urlParsedResult[2] && urlParsedResult[2].toLowerCase()) || ''
       this.port = urlParsedResult[3] || ''
       this.path = urlParsedResult[4] || ''
       this.search = urlParsedResult[5] || ''
@@ -27,14 +27,7 @@ export class Ih5URL {
 
   addParams(params, type, prefix) {
     if (params && this.isValid) {
-      let paramsMap = this[type]
-        .slice(1)
-        .split('&')
-        .reduce(function(paramsMap, keyPair) {
-          const [key, value] = keyPair.split('=')
-          if (key) Reflect.set(paramsMap, key, value)
-          return paramsMap
-        }, {})
+      let paramsMap = this.getParams(type)
       Object.keys(params).forEach(function(key) {
         Reflect.set(paramsMap, key, params[key])
       })
@@ -47,6 +40,23 @@ export class Ih5URL {
           .join('&')
     }
     return this
+  }
+
+  getParams(type) {
+    return this[type]
+      .slice(1)
+      .split('&')
+      .reduce(function(paramsMap, keyPair) {
+      	const match = /=/.exec(keyPair)
+        let key = keyPair
+        let value = ''
+        if (match) {
+        	key = keyPair.substr(0, match.index)
+            value = keyPair.substr(match.index + 1)
+        }
+        if (key) Reflect.set(paramsMap, key, value)
+        return paramsMap
+      }, {})
   }
 
   addSearchParams(params) {
