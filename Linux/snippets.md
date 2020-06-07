@@ -11,6 +11,11 @@ date -d '-1 month' +'%Y-%m-%d'
 # -newermt中的mt是modified time的缩写
 find [path...] -maxdepth 1 -mindepth 1 -type d ! -newermt "$(date -d '-1 month' +'%Y-%m-%d')"
 ```
+### 以简明的方式显示本地ipv4地址
+```bash
+# -br 
+ip -f inet -br addr
+```
 ### 显示端口的使用情况
 ```bash
 # lsof 是list open files的缩写
