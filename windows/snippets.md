@@ -25,6 +25,7 @@ javac -encoding utf-8 -classpath "[path1];[path2];[pathN]" <entry-java-file> -d 
 ```cmd
 :: classpath: 与编译类似，执行class文件需要在classpath加入引用的jar包路径，
 :: 不同的是编译时需要加入的是源码所声明的包的目录根路径，执行时加入的是编译的目标路径，对应上面的ouput-package-base-dir
-:: full-class-name是完整的类名，如类路径是target\classes\com\macro\mall\tiny\mbg\Generator.class，那么完整类名则是com.macro.mall.tiny.mbg.Generator
+:: full-class-name是完整的类名，如类路径是target\classes\com\macro\mall\tiny\mbg\Generator.class，
+:: 那么完整类名则是com.macro.mall.tiny.mbg.Generator
 java -classpath "[path1];[path2];[pathN]" <full-class-name>
 ```
