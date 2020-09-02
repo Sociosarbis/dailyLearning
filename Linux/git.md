@@ -13,4 +13,5 @@ git init <project-name>
 cd <project-name>
 git remote add origin <remote-repo-url>
 # 执行上面的#1，#2，#3步
+git checkout <branch>
 ```
