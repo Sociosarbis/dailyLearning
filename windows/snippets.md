@@ -29,3 +29,11 @@ javac -encoding utf-8 -classpath "[path1];[path2];[pathN]" <entry-java-file> -d 
 :: 那么完整类名则是com.macro.mall.tiny.mbg.Generator
 java -classpath "[path1];[path2];[pathN]" <full-class-name>
 ```
+
+### linux子系统的导出与导入
+```cmd
+:: DistributionName 是子系统的名称
+wsl --export <DistributionName> <Tar-FileName>
+:: 导入
+wsl --import <DistributionName> <Folder-To-Install> <Tar-FileName>
+```
