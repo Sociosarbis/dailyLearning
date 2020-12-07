@@ -37,7 +37,7 @@ lsof -i -P -n
 ssh-copy-id [-i <public-key-path>] [username@]<remote_addr>
 ```
 ### 启用双星号的glob写法
-```
+```bash
 # **的写法不是默认都支持的
 shopt -s globstar
 ```
