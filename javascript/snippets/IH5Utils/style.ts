@@ -16,9 +16,21 @@ function normalizeColor(value: number) {
   return value / 255
 }
 
+function normalizeRGB(color: RGB) {
+  return {
+    r: normalizeColor(color.r),
+    g: normalizeColor(color.g),
+    b: normalizeColor(color.b),
+  }
+}
+
 function calcLuminance(color: RGB) {
   const { r, g, b } = normalizeRGB(color)
 	return normalizeColor(r) * 0.2126 + normalizeColor(g) * 0.7152 + normalizeColor(b) * 0.0722
+}
+
+function calcGreyScale(color: RGB) {
+  return 0.299* color.r+0.587*color.g+0.114*color.b
 }
 
 function calcContrast(color1:RGB, color2: RGB) {

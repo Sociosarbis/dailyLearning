@@ -1,0 +1,1 @@
+node可引入包的搜索路径可通过global.module.paths获取，通过设置环境变量NODE_PATH添加包的搜索路径

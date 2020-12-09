@@ -1,2 +1,0 @@
-Uint8ClampedArray typed array represent a array of 8-bit unsigned integers array clamped to 0-255
-fomula for converting rgb to greyscale:0.299*r+0.587*g+0.114*b
