@@ -17,3 +17,10 @@ git remote add origin <remote-repo-url>
 # 执行上面的#1，#2，#3步
 git checkout <branch>
 ```
+
+## 列出某个提交者的commit
+```bash
+# 只显示added, copied, modified, renamed的记录
+# 不包含commit1
+git log --author="<name>" --diff-filter=ACMR --name-only [commit1]..[commit2] --oneline
+```
