@@ -22,5 +22,5 @@ git checkout <branch>
 ```bash
 # 只显示added, copied, modified, renamed的记录
 # 不包含commit1
-git log --author="<name>" --diff-filter=ACMR --name-only [commit1]..[commit2] --oneline
+git log --author="<name>" --diff-filter=ACMR --name-only [commit1]..[commit2]
 ```
