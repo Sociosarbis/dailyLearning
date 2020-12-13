@@ -38,7 +38,7 @@ let g = e.core // ok
 ## Clone与ToOwned
 >If your type is Clone, you get the blanket implementation of ToOwned and can't implement the trait yourself. If you type isn't Clone and you need ToOwned, you have to implement it yourself.– [Sven Marnach](https://stackoverflow.com/questions/63553892/when-does-to-owned-not-clone)
 
-如果类型实现了`Clone Trait`，则会获得一个公共的`ToOwned`实现**（blanket implementation）**，将不能自行实现`ToOwned Trait`
+如果类型实现了`Clone Trait`，则会获得一个公共的`ToOwned`实现（**blanket implementation**），将不能自行实现`ToOwned Trait`
 
 ### [blanket implementation for ToOwned](https://doc.rust-lang.org/src/alloc/borrow.rs.html#80-92)
 ```rust
