@@ -20,3 +20,8 @@ docker inspect -f '{{ .NetworkSettings.IPAddress }}' redis-dev
 # 或者使用下面的go template获取所有networks的ip，range和end构成类似for-loop的block，中间的部分为每个item需要渲染的内容
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' redis-dev
 ```
+
+#### 传递sql语句到postgres容器
+```bash
+cat path/to/sql_file | docker exec -i -e PGPASSOWRD=<password> <container_name> psql -U <user_name> -d <database_name>
+```
