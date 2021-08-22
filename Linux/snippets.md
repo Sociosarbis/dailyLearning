@@ -41,3 +41,31 @@ ssh-copy-id [-i <public-key-path>] [username@]<remote_addr>
 # **的写法不是默认都支持的
 shopt -s globstar
 ```
+### WSL shell初始化配置
+```bash
+# 宿主机的IP动态设置在/etc/resolv.conf，v2Ray需启用允许局域网连接，windows防火墙需允许Privoxy
+HOST_IP=$(grep nameserver /etc/resolv.conf | awk '{ print $2 }')
+HTTP_PROXY="http://$HOST_IP:10809"
+HTTPS_PROXY="http://$HOST_IP:10809"
+http_proxy=$HTTP_PROXY
+https_proxy=$HTTPS_PROXY
+
+cat >  /etc/apt/apt.conf.d/proxy.conf <<EOF
+Acquire {
+  HTTP::proxy "$HTTP_PROXY";
+  HTTPS::proxy "$HTTPS_PROXY";
+}
+EOF
+
+# 将登录用户添加到root用户组
+# -a, append
+# -G, group
+sudo usermod -a -G root <username>
+
+# 安装zsh
+sudo apt install --upgrade zsh
+# 查看所有的shell
+cat /etc/shells
+# 将zsh设为默认shell
+chsh -s /bin/zsh
+```
