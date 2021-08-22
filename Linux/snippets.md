@@ -50,6 +50,13 @@ HTTPS_PROXY="http://$HOST_IP:10809"
 http_proxy=$HTTP_PROXY
 https_proxy=$HTTPS_PROXY
 
+# 启动带有代理的docker
+RUNNING=$(ps aux | grep dockerd | grep -v grep)
+if [ -z "$RUNNING" ];then
+  HTTPS_PROXY=$HTTPS_PROXY dockerd > /dev/null 2>&1 &
+  disown
+fi
+
 cat >  /etc/apt/apt.conf.d/proxy.conf <<EOF
 Acquire {
   HTTP::proxy "$HTTP_PROXY";
