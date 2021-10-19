@@ -41,3 +41,24 @@
    13. 函数的`this`不再默认指向全局
    14. 不允许获取函数的`arguments`属性
    15. `implements`, `interface`, `let`, `package`, `private`, `protected`, `public`, `static`, 和 `yield`会作为保留关键字
+
+### Framework
+1. `Vue`不需要`time slicing（时间切片）`的原因：
+  1. 只有当框架更新调度的`CPU`用时经常超过`100ms`才能发挥用处。
+  2. 更新调度较`React`简单，由于没引入`time slicing`，也因此也没多引入`fiber`做额外的逻辑处理。
+  3. 使用`template`可以方便在编译时做静态的分析并做预处理，减少运行时的工作，如将`slot`转为`function`，缓存`inline`的事件`handler`，将不变的内容转为静态代码。
+  4. 提供`reactivity tracking`功能，一般情况下无需开发者去做额外优化，即可做到只更新所需的组件。
+  5. 加入`time slicing`会使代码体积变大。
+
+2. `Vue` 和 `React` `children`的`diff`算法（根据2021/10/19时的源码总结）
+  1. `Vue`（当前索引记为`i`，右端旧索引记为`e1`,新索引记为`e2`）
+    1. 从左端逐个对比，直到新`child`无法由旧`child`更新而来
+    2. 从右端逐个对比，直到新`child`无法由旧`child`更新而来
+    3. 如果`i`大于`e1`但小于`e2`，表示旧`child`已用完，只需`mount`余下新`child`即可
+    4. 如果`i`大于`e2`但小于`e1`，表示存在旧`child`未出现在新的集合中，只需`unmount`余下旧`child`即可
+    5. 最后通过`vnode`的`key`（或者`type`，无`key`时）作与顺序无关的匹配更新（通过`map`）。余下旧`child`则`unmount`；余下新`child`则`mount`。这一步中会判定是否需要对复用旧`child`的新`child`标记位置有变动，该判定会使用`Longest_increasing_subsequence`算法来最小化标记移动的数量。
+  2. `React`
+    1. 从新`children`数组的左端开始循环，逐个与旧`fiber`进行比对，直到旧`fiber`的`key`与新`fiber`的不一致时中断。
+    2. 如果新`fiber`都已使用，则移除余下的旧`fiber`；如果旧`fiber`都被复用，则将创建余下的新`fiber`
+    3. 最后只能通过`key`或者`index`作为依据匹配旧`fiber`，未被匹配的旧`fiber`将被移除，未被匹配的新`fiber`将创建。
+    4. 新`fiber`创建或复用时，都有一个`place`的步骤，只有当新`fiber`可复用旧`fiber`且旧`fiber`的`index`不小于之前复用过的旧`fiber`的`index`时才会认为是保持在原位置。是否标记为移动的判断与`Vue`是类似的，但`Vue`取的是最长(**longest**)的子序列。
