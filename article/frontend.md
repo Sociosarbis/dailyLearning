@@ -62,3 +62,15 @@
     2. 如果新`fiber`都已使用，则移除余下的旧`fiber`；如果旧`fiber`都被复用，则将创建余下的新`fiber`
     3. 最后只能通过`key`或者`index`作为依据匹配旧`fiber`，未被匹配的旧`fiber`将被移除，未被匹配的新`fiber`将创建。
     4. 新`fiber`创建或复用时，都有一个`place`的步骤，只有当新`fiber`可复用旧`fiber`且旧`fiber`的`index`不小于之前复用过的旧`fiber`的`index`时才会认为是保持在原位置。是否标记为移动的判断与`Vue`是类似的，但`Vue`取的是最长(**longest**)的子序列。
+
+  ### Design Pattern
+  1. `MVC`、`MVP`、`MVVM`的区分
+    1. `MVC`
+      * `View`接收到用户的交互后调用`Controller`的方法更新`Model`，`Model`改变后通知`View`更新。
+      * `View`有`Controller`的引用，`Controller`有`Model`的引用，`Model`有`View`的引用。
+    2. `MVP`
+      * `Presenter`监听`View`发出的事件，执行自身对应的方法更新`Model`，`Model`改变后通知`Presenter`，`Presenter`负责调用`View`的方法进行更新。
+      * `Presenter`有`View`和`Model`的引用
+    3. `MVVM`
+      * `ViewModel`负责从`Model`中获取`View`所需的数据，根据情况拉取和更新`Model`数据并对`View`提供自身的数据和改变自身数据的方法。`View`通过数据和事件绑定，监听`ViewModel`的数据变化并在用户的交互中调用`ViewModel`提供的方法更改它的数据；当`ViewModel`数据变化时，框架自动去更新`View`（不需要开发者显式调用`View`的方法）。
+      * `ViewModel`有`Model`的引用，`View`有`ViewModel`的引用
