@@ -63,6 +63,11 @@
     3. 最后只能通过`key`或者`index`作为依据匹配旧`fiber`，未被匹配的旧`fiber`将被移除，未被匹配的新`fiber`将创建。
     4. 新`fiber`创建或复用时，都有一个`place`的步骤，只有当新`fiber`可复用旧`fiber`且旧`fiber`的`index`不小于之前复用过的旧`fiber`的`index`时才会认为是保持在原位置。是否标记为移动的判断与`Vue`是类似的，但`Vue`取的是最长(**longest**)的子序列。
 
+
+3. `React`的`setState`是否能立刻更改`state`的值（v17）
+  * `setState`如果在`React`的合成事件或者生命周期的回调中使用时，`setState`不会在执行后立刻更改`state`的值，因为`React`在上述情况中，会给`executionContext`增加对应标记使更改不会立刻执行
+  * 而其余情况例如`setTimeout`，原生`DOM`的`event`回调并不会给`executionContext`添加标记，所以`setState`会立刻更改`state`
+  * 但`setState`的调用过程是以同步方式进行的，它会在`finally block`中执行`flush`。
   ### Design Pattern
   1. `MVC`、`MVP`、`MVVM`的区分
     1. `MVC`
