@@ -79,3 +79,10 @@
     3. `MVVM`
       * `ViewModel`负责从`Model`中获取`View`所需的数据，根据情况拉取和更新`Model`数据并对`View`提供自身的数据和改变自身数据的方法。`View`通过数据和事件绑定，监听`ViewModel`的数据变化并在用户的交互中调用`ViewModel`提供的方法更改它的数据；当`ViewModel`数据变化时，框架自动去更新`View`（不需要开发者显式调用`View`的方法）。
       * `ViewModel`有`Model`的引用，`View`有`ViewModel`的引用
+
+4. [`Vue2.x`为什么非函数组件不支持多个根节点](https://github.com/vuejs/vue/issues/7088)
+   * 子组件在父组件中都被表示为单个`vnode`，而`vnode`在`2.x`的`diff`算法中都有一个实际的`dom`与其对应。
+   * 如此当`diff`完一个子组件后，只需将下一个子组件与下一个`dom`进行`diff`即可。
+   * 但如果一个子组件对应多个`dom`，那么`diff`时则需要一种机制来保存子组件下`dom`的数量，以便跳过该子组件所属的`dom`，来做下一个子组件的`diff`。
+   * 这个改动牵涉到代码的根本逻辑，所以并未去实现，而`Fragment`这个特性也是`React`在重写了渲染层后才有的。
+   * 所以才在`Vue3.x`的大改动中，在`fragment`类型的`vnode`中除了`el`表示起始外还加入了`anchor`来表示结束标志，而这两者都是一个空的`TextNode`来表示，放在它们之间的才是真正需要渲染的`dom`
