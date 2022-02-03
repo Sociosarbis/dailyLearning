@@ -42,6 +42,17 @@
    14. 不允许获取函数的`arguments`属性
    15. `implements`, `interface`, `let`, `package`, `private`, `protected`, `public`, `static`, 和 `yield`会作为保留关键字
 
+2. 
+* 基础数据类型`boolean`, `null`, `undefined`, `number`, `bigInt`, `string`, `symbol`和`引用`存在`stack`上，`对象`和`函数`的值则存在`heap`上。
+* 在`heap`中的分配的内存，会使用`引用计数`(**references count**)和`mark & sweep`(检测是否存在路径从根对象到达该对象，解决循环引用，不能释放内存的问题)
+
+3. 原型链
+* 继承方式
+1. `new`（实例的__proto__属性指向构造函数的`prototype`）
+2. `Object.create`
+3. `Object.setPrototypeOf`
+4. 设置`__proto__`属性
+
 ### Framework
 1. `Vue`不需要`time slicing（时间切片）`的原因：
   1. 只有当框架更新调度的`CPU`用时经常超过`100ms`才能发挥用处。
