@@ -97,3 +97,15 @@
    * 但如果一个子组件对应多个`dom`，那么`diff`时则需要一种机制来保存子组件下`dom`的数量，以便跳过该子组件所属的`dom`，来做下一个子组件的`diff`。
    * 这个改动牵涉到代码的根本逻辑，所以并未去实现，而`Fragment`这个特性也是`React`在重写了渲染层后才有的。
    * 所以才在`Vue3.x`的大改动中，在`fragment`类型的`vnode`中除了`el`表示起始外还加入了`anchor`来表示结束标志，而这两者都是一个空的`TextNode`来表示，放在它们之间的才是真正需要渲染的`dom`
+
+5. `React Fiber`基础
+
+1. `Fiber`结构
+  * `stateNode`: 其对应的`React Element`实例
+  * `type`: `stateNode`的类型，例如用户定义的`Class`或`function`
+  * `tag`: 在`reconciliation`中使用的`React Element`分类
+  * `updateQueue`: 在`function component`中时为各类`Effect`的`callback`链表
+  * `memoizedState`: 输出当前渲染状态对应的`state`，如果是`function component`则为`state`钩子的链表
+  * `memoizedProps`: 输出当前渲染状态对应的`props`
+  * `pendingProps`: 用于输出下次渲染状态的`props`
+  * `key`: 与`React Element`的`key`相同
