@@ -109,3 +109,30 @@
   * `memoizedProps`: 输出当前渲染状态对应的`props`
   * `pendingProps`: 用于输出下次渲染状态的`props`
   * `key`: 与`React Element`的`key`相同
+  * `child`: 首个子`Fiber`
+  * `return`: 父`Fiber`
+  * `sibliing`: 下一个兄弟`Fiber`
+
+2. `Fiber`的`reconciliation`分为两个阶段，`render`和`commit`。
+  1. `render`阶段在`concurrent`模式中是可中断的，在此阶段只去更新`Fiber`的状态。再次执行时可从中断的`Fiber`开始或从`root`重头再来。遍历`Fiber`是一个深度遍历，按此顺序`child -> sibling -> return`进行。
+  2. `commit`阶段则是不可中断的，因为这个阶段是把`Fiber`状态同步到界面上，若能中断，则会展示一个中间状态。
+  3. `render`阶段的生命周期：
+    1. `getDerivedStateFromProps`
+    2. `shouldComponentUpdate`
+    3. `render`
+  4. `commit`阶段的生命周期:
+    1. `getSnapshotBeforeUpdate`
+    2. `componentDidMount`
+    3. `componentDidUpdate`
+    4. `componentWillUnmount`
+  5. `reconciliation`的步骤
+    1. `render`阶段
+      1. `performUnitOfWork`
+      2. `beginWork`
+      3. `completeUnitOfWork`
+      4. `completeWork`
+    2. `commit`阶段
+      1. `flushPassiveEffects`
+      2. `commitBeforeMutationEffects`（`getSnapshotBeforeUpdate`在此调用）
+      3. `commitMutationEffects`（如果是销毁组件的操作，则触发`componentWillUnmount`和执行`Effect`的销毁回调）
+      4. `commitLayoutEffects`（因为`useLayoutEffect`在`DOM`完成更新后执行，所以可以用于读取最新的`DOM`,与`componentDidUpdate`或`componentDidMount`对应）
