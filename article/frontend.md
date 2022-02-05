@@ -11,8 +11,10 @@
    
     1. 加载的是本地缓存的资源
     2. 网络环境延迟低，请求响应过程短
-    3. 网络环境丢包严重，某个包的丢失使其余的`HTTP2`数据流延迟（各请求复用同一个`TCP`连接，即多路复用），而`HTTP1.x`则是各请求使用独立`TCP`连接
+    3. 网络环境丢包严重，某个包的丢失使其余的`HTTP2`数据流延迟（在`TCP`传输层上的队头堵塞问题，各请求复用同一个`TCP`连接，即多路复用），而`HTTP1.x`则是各请求使用独立`TCP`连接
     4. 部分浏览器对`HTTP2`的支持不好
+
+2. `HTTP1.1`的`pipelining`：浏览器可以一次发出多个请求（同一个域名，同一条 TCP 链接）。但要求响应是按序返回的，前面的某个请求耗时长，会需要后面请求的响应较长的等待时间。
 
 ### Javascript
 
@@ -99,40 +101,41 @@
    * 所以才在`Vue3.x`的大改动中，在`fragment`类型的`vnode`中除了`el`表示起始外还加入了`anchor`来表示结束标志，而这两者都是一个空的`TextNode`来表示，放在它们之间的才是真正需要渲染的`dom`
 
 5. `React Fiber`基础
+  1. `Fiber`结构
+    * `stateNode`: 其对应的`React Element`实例
+    * `type`: `stateNode`的类型，例如用户定义的`Class`或`function`
+    * `tag`: 在`reconciliation`中使用的`React Element`分类
+    * `updateQueue`: 在`function component`中时为各类`Effect`的`callback`链表
+    * `memoizedState`: 输出当前渲染状态对应的`state`，如果是`function component`则为`state`钩子的链表
+    * `memoizedProps`: 输出当前渲染状态对应的`props`
+    * `pendingProps`: 用于输出下次渲染状态的`props`
+    * `key`: 与`React Element`的`key`相同
+    * `child`: 首个子`Fiber`
+    * `return`: 父`Fiber`
+    * `sibliing`: 下一个兄弟`Fiber`
 
-1. `Fiber`结构
-  * `stateNode`: 其对应的`React Element`实例
-  * `type`: `stateNode`的类型，例如用户定义的`Class`或`function`
-  * `tag`: 在`reconciliation`中使用的`React Element`分类
-  * `updateQueue`: 在`function component`中时为各类`Effect`的`callback`链表
-  * `memoizedState`: 输出当前渲染状态对应的`state`，如果是`function component`则为`state`钩子的链表
-  * `memoizedProps`: 输出当前渲染状态对应的`props`
-  * `pendingProps`: 用于输出下次渲染状态的`props`
-  * `key`: 与`React Element`的`key`相同
-  * `child`: 首个子`Fiber`
-  * `return`: 父`Fiber`
-  * `sibliing`: 下一个兄弟`Fiber`
+  2. `Fiber`的`reconciliation`分为两个阶段，`render`和`commit`。
+    1. `render`阶段在`concurrent`模式中是可中断的，在此阶段只去更新`Fiber`的状态。再次执行时可从中断的`Fiber`开始或从`root`重头再来。遍历`Fiber`是一个深度遍历，按此顺序`child -> sibling -> return`进行。
+    2. `commit`阶段则是不可中断的，因为这个阶段是把`Fiber`状态同步到界面上，若能中断，则会展示一个中间状态。
+    3. `render`阶段的生命周期：
+      1. `getDerivedStateFromProps`
+      2. `shouldComponentUpdate`
+      3. `render`
+    4. `commit`阶段的生命周期:
+      1. `getSnapshotBeforeUpdate`
+      2. `componentDidMount`
+      3. `componentDidUpdate`
+      4. `componentWillUnmount`
+    5. `reconciliation`的步骤
+      1. `render`阶段
+        1. `performUnitOfWork`
+        2. `beginWork`
+        3. `completeUnitOfWork`
+        4. `completeWork`
+      2. `commit`阶段
+        1. `flushPassiveEffects`
+        2. `commitBeforeMutationEffects`（`getSnapshotBeforeUpdate`在此调用）
+        3. `commitMutationEffects`（如果是销毁组件的操作，则触发`componentWillUnmount`和执行`Effect`的销毁回调）
+        4. `commitLayoutEffects`（因为`useLayoutEffect`在`DOM`完成更新后执行，所以可以用于读取最新的`DOM`,与`componentDidUpdate`或`componentDidMount`对应）
 
-2. `Fiber`的`reconciliation`分为两个阶段，`render`和`commit`。
-  1. `render`阶段在`concurrent`模式中是可中断的，在此阶段只去更新`Fiber`的状态。再次执行时可从中断的`Fiber`开始或从`root`重头再来。遍历`Fiber`是一个深度遍历，按此顺序`child -> sibling -> return`进行。
-  2. `commit`阶段则是不可中断的，因为这个阶段是把`Fiber`状态同步到界面上，若能中断，则会展示一个中间状态。
-  3. `render`阶段的生命周期：
-    1. `getDerivedStateFromProps`
-    2. `shouldComponentUpdate`
-    3. `render`
-  4. `commit`阶段的生命周期:
-    1. `getSnapshotBeforeUpdate`
-    2. `componentDidMount`
-    3. `componentDidUpdate`
-    4. `componentWillUnmount`
-  5. `reconciliation`的步骤
-    1. `render`阶段
-      1. `performUnitOfWork`
-      2. `beginWork`
-      3. `completeUnitOfWork`
-      4. `completeWork`
-    2. `commit`阶段
-      1. `flushPassiveEffects`
-      2. `commitBeforeMutationEffects`（`getSnapshotBeforeUpdate`在此调用）
-      3. `commitMutationEffects`（如果是销毁组件的操作，则触发`componentWillUnmount`和执行`Effect`的销毁回调）
-      4. `commitLayoutEffects`（因为`useLayoutEffect`在`DOM`完成更新后执行，所以可以用于读取最新的`DOM`,与`componentDidUpdate`或`componentDidMount`对应）
+6. `Vue`的`nextTick`的原理是给一个已`resolved`或者即将把更新`flush`到界面的`Promise`添加`callback`来创建一个微任务。
