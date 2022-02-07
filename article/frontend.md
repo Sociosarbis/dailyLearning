@@ -16,6 +16,14 @@
 
 2. `HTTP1.1`的`pipelining`：浏览器可以一次发出多个请求（同一个域名，同一条 TCP 链接）。但要求响应是按序返回的，前面的某个请求耗时长，会需要后面请求的响应较长的等待时间。
 
+3. [`dns`解析过程](https://jvns.ca/blog/2022/02/01/a-dns-resolver-in-80-lines-of-go/)，以`jvns.ca`为例：
+    1. 本地的`host`记录
+    2. 根域名服务器
+    3. `.ca`域名服务器
+    4. `jvns.ca`域名服务器
+
+    ***从根域名服务器开始，如果该级的域名服务器没有目标域名的记录，则会给出下一级的域名服务器的域名或者域名及其ip（如果只给出域名，则需要先去解析域名服务器的域名后，再向该域名服务器发出解析目标域名的请求）。以.号分隔的片段作为域名服务器的级数***
+
 ### Javascript
 
 1. 使用严格模式会有哪些变化：
@@ -139,3 +147,17 @@
         4. `commitLayoutEffects`（因为`useLayoutEffect`在`DOM`完成更新后执行，所以可以用于读取最新的`DOM`,与`componentDidUpdate`或`componentDidMount`对应）
 
 6. `Vue`的`nextTick`的原理是给一个已`resolved`或者即将把更新`flush`到界面的`Promise`添加`callback`来创建一个微任务。
+
+7. `Vue`父子组件的挂载/卸载周期顺序：
+    1. parent beforeCreate 
+    2. parent created 
+    3. parent beforeMount 
+    4. child beforeCreate 
+    5. child created 
+    6. child beforeMount 
+    7. child mounted 
+    8. parent mounted
+    9. parent beforeUnmount 
+    10. child beforeUnmount 
+    11. child unmounted 
+    12. parent unmounted 
