@@ -27,6 +27,15 @@
 
     ***从根域名服务器开始，如果该级的域名服务器没有目标域名的记录，则会给出下一级的域名服务器的域名或者域名及其ip（如果只给出域名，则需要先去解析域名服务器的域名后，再向该域名服务器发出解析目标域名的请求）。以.号分隔的片段作为域名服务器的级数***
 
+### 浏览器
+1. `requestAnimationFrame`和`setInterval`的区别：
+`requestAnimationFrame`会在浏览器界面每次重绘前调用，通常为频率为每秒60次，有一定的波动，通常在浏览器进入后台后会停止调用，由于该`api`与浏览器重绘紧密相连，所以使用它来实现动画会比较流畅和高效；`setInterval`则是相对固定的时间间隔调用，间隔小，对动画来说会产生不必要的计算次数，间隔大则会不流畅。
+
+2. 发出跨域请求前会发出`options`的预检请求来检验请求使用的`method`和`header`是否准许。但简单请求不需发出预检请求。简单请求需满足以下所有条件：
+    1. `method`为`GET`, `HEAD`，`POST`的其中之一
+    2. 除自动设置的`header`外，只能添加`Accept`，`Accept-Language`，`Content-Language`，`Content-Type`这几个`header`
+    3. `Content-Type`只可设为`application/x-www-form-urlencoded`，`multipart/form-data`或`text/plain`
+
 ### Javascript
 
 1. 使用严格模式会有哪些变化：
