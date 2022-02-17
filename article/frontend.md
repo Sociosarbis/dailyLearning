@@ -36,11 +36,18 @@
     2. 除自动设置的`header`外，只能添加`Accept`，`Accept-Language`，`Content-Language`，`Content-Type`这几个`header`
     3. `Content-Type`只可设为`application/x-www-form-urlencoded`，`multipart/form-data`或`text/plain`
 
+3. 性能术语：
+  `FCP(First Contentful Paint)`：网页首次绘制完（文本，图片，`svg`，非白色`canvas`）这些素材的时间点
+  `long task`: 阻塞浏览器主线程的超过`50ms`的任务
+  `TTI(Time To Interactive)`： 从`FCP`开始计的某个`long task`的结束时间，该`long task`满足结束5秒都没有下一个`long task`
+  `FP`: 显示出第一个可见像素的时间点
+  `FID(First Input Delay)`：第一个用户交互的响应延迟
+  `LCP(Largest Contentful Paint)`：面积最大的素材绘制时间点，会根据页面显示阶段的不同而变化，例如如果一开始只有文字，那时间点就在渲染文字上，如果后面有图片等面积更大的元素，则会改为渲染该元素的时间点
 ### Javascript
 
 1. 使用严格模式会有哪些变化：
 
-   1. 不允许通过赋值变量来创建全局变量
+   1. 不允许通过赋值变量来创建全局变量，如`a = 2`不会创建全局变量`a`
    2. 对不可修改的变量如`NaN`，只读属性赋值和对不可扩展的对象增加属性都会报错
    3. 删除不可删除的属性时会报错
    4. 不允许函数的参数名重复
@@ -59,10 +66,9 @@
      return [a, arguments[0]];
    }
    ```
-   12. 不再支持`arugments.callee`
+   12. 不再支持从**函数**或`arugments`上读取`callee`，`caller`，`arguments`属性
    13. 函数的`this`不再默认指向全局
-   14. 不允许获取函数的`arguments`属性
-   15. `implements`, `interface`, `let`, `package`, `private`, `protected`, `public`, `static`, 和 `yield`会作为保留关键字
+   14. `implements`, `interface`, `let`, `package`, `private`, `protected`, `public`, `static`, 和 `yield`会作为保留关键字
 
 2. 
 * 基础数据类型`boolean`, `null`, `undefined`, `number`, `bigInt`, `string`, `symbol`和`引用`存在`stack`上，`对象`和`函数`的值则存在`heap`上。
