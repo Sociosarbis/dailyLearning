@@ -27,6 +27,15 @@
 
     ***从根域名服务器开始，如果该级的域名服务器没有目标域名的记录，则会给出下一级的域名服务器的域名或者域名及其ip（如果只给出域名，则需要先去解析域名服务器的域名后，再向该域名服务器发出解析目标域名的请求）。以.号分隔的片段作为域名服务器的级数***
 
+4. `HTTP2`的新特性：
+    
+    1. 数据为二进制，`HTTP1.x`为文本，同时会分解成多个帧
+    2. 多路复用
+    3. 服务器推送
+    4. `header`使用`HPACK`压缩，支持哈夫曼编码压缩首次出现的值，同时客户端和服务端通过索引表来在`header`中引用之前传输过的字段
+        
+        p.s: 请求行在`HTTP2`拆分成各个 `:method`、`:scheme`、`:authority` 和 `:path` 伪`header`字段。
+
 ### 浏览器
 1. `requestAnimationFrame`和`setInterval`的区别：
 `requestAnimationFrame`会在浏览器界面每次重绘前调用，通常为频率为每秒60次，有一定的波动，通常在浏览器进入后台后会停止调用，由于该`api`与浏览器重绘紧密相连，所以使用它来实现动画会比较流畅和高效；`setInterval`则是相对固定的时间间隔调用，间隔小，对动画来说会产生不必要的计算次数，间隔大则会不流畅。
@@ -77,10 +86,10 @@
 
 3. 原型链
 * 继承方式
-1. `new`（实例的__proto__属性指向构造函数的`prototype`）
-2. `Object.create`
-3. `Object.setPrototypeOf`
-4. 设置`__proto__`属性
+  1. `new`（实例的__proto__属性指向构造函数的`prototype`）
+  2. `Object.create`
+  3. `Object.setPrototypeOf`
+  4. 设置`__proto__`属性
 
 
 4. 设计模式
@@ -90,6 +99,14 @@
     4. `适配器模式`：将源数据改造成分别兼容各个`API`的结构
     5. `代理模式`：在代理对象上加一层访问控制
     6. `责任链模式`：将逻辑独立拆分开来，并让它们可自由组合成一个链条，可理解为调用函数的链表
+
+5. 宏任务和微任务：
+* **macroTasks**: `setTimeout`, `setInterval`, `setImmediate`, `requestAnimationFrame`, `I/O`, `UI rendering`
+* **microTasks**: `process.nextTick`, `Promises`, `queueMicrotask`, `MutationObserver`
+    
+    微任务利用在同步代码后才执行的特性，可以`batch`数据更新的操作，并且由于它能先于`UI`重新`render`执行，所以又能让`UI`实时显示最新的改动。
+
+
 ### Framework
 1. `Vue`不需要`time slicing（时间切片）`的原因：
   1. 只有当框架更新调度的`CPU`用时经常超过`100ms`才能发挥用处。
@@ -188,3 +205,16 @@
     10. child beforeUnmount 
     11. child unmounted 
     12. parent unmounted 
+
+8. `Vue`的`beforeUpdate`是在数据同步到`DOM`前调起，可以获取`DOM`在下一次更新前的状态，可用于移除之前手动在`DOM`上添加的事件监听
+
+9. `Vue 3`新特性：
+    1. `composition api`
+    2. `teleport`
+    3. `Fragments`
+    4. `style`支持`v-bind`
+    5. `proxy`
+    6. 模板静态分析:
+        1. 静态`vnode`的提升，将静态的`vnode`缓存到`render`函数之外的变量，使每次`render`都能复用
+        2. 为`vnode`添加`patchFlag`，标记它是否需要的`patch`类型
+        3. 将`children`分为`static`和`dynaimic`，只对`dynamic`的进行比对更新
