@@ -31,7 +31,7 @@
     
     1. 数据为二进制，`HTTP1.x`为文本，同时会分解成多个帧
     2. 多路复用
-    3. 服务器推送
+    3. 服务器推送，通过在响应添加`Header`，如`Link: </style.css>; rel=preload; as=stylesheet`
     4. `header`使用`HPACK`压缩，支持哈夫曼编码压缩首次出现的值，同时客户端和服务端通过索引表来在`header`中引用之前传输过的字段
         
         p.s: 请求行在`HTTP2`拆分成各个 `:method`、`:scheme`、`:authority` 和 `:path` 伪`header`字段。
