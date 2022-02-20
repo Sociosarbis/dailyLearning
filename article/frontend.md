@@ -44,6 +44,7 @@
     1. `method`为`GET`, `HEAD`，`POST`的其中之一
     2. 除自动设置的`header`外，只能添加`Accept`，`Accept-Language`，`Content-Language`，`Content-Type`这几个`header`
     3. `Content-Type`只可设为`application/x-www-form-urlencoded`，`multipart/form-data`或`text/plain`
+    **p.s**: `form`元素可以发出跨域请求
 
 3. 性能术语：
   `FCP(First Contentful Paint)`：网页首次绘制完（文本，图片，`svg`，非白色`canvas`）这些素材的时间点
@@ -52,6 +53,31 @@
   `FP`: 显示出第一个可见像素的时间点
   `FID(First Input Delay)`：第一个用户交互的响应延迟
   `LCP(Largest Contentful Paint)`：面积最大的素材绘制时间点，会根据页面显示阶段的不同而变化，例如如果一开始只有文字，那时间点就在渲染文字上，如果后面有图片等面积更大的元素，则会改为渲染该元素的时间点
+
+4. 跨域通信方案：
+    1. `jsonp`
+    2. `location.hash + iframe（a(domain1)->b(domain2)->c(domain1)）`：利用同源页面间可以互相访问
+    3. `window.domain + iframe`：根域名相同的两个页面同时设为相同的上级域名
+    4. 反向代理
+    5. `websocket`：页面可以创建任意域名的`websocket`连接，可通过请求`Origin`头验证是否同源和其他防范`csrf`的方式解决
+
+5. `http`缓存:
+
+    `Expires`：过期时间点
+    
+    `Cache-Control`:
+        
+      * `no-cache`：使用缓存但使用前需跟服务器验证
+      * `no-store`: 不适用缓存
+      * `max-age`: 响应的有效时间，如果存在，`Expires`会被忽略
+    
+    `If-Not-Modified-Since`: 从某个时间点开始资源未被更改
+    
+    `E-Tag`**(response)**: 资源内容的签名，用来判断资源的内容是否有被更改
+
+    `If-None-Match`: 字段值为`E-Tag`，用来给服务器判断客户端的资源是否与最新的一致
+
+
 ### Javascript
 
 1. 使用严格模式会有哪些变化：
