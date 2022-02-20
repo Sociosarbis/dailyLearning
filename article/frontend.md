@@ -218,3 +218,48 @@
         1. 静态`vnode`的提升，将静态的`vnode`缓存到`render`函数之外的变量，使每次`render`都能复用
         2. 为`vnode`添加`patchFlag`，标记它是否需要的`patch`类型
         3. 将`children`分为`static`和`dynaimic`，只对`dynamic`的进行比对更新
+
+### node
+1. 事件循环
+
+    1. **Timers**: 执行`setTimeout`和`setInterval`的回调
+    2. **Pending**：执行系统相关的回调
+    3. **Idle/Prepare**：空闲及预备阶段
+    4. **Poll**：异步`I/O`的回调
+    5. **Check**: 执行`setImmediate`的回调
+    6. **Close**：执行关闭事件的回调，如`socket`和`process`
+
+        伪代码：
+        ```javascript
+        const timersCallbackQueue = []
+        const checkCallbackQueue = []
+        const pollCallbackQueue = []
+        const closeCallbackQueue = []
+        const microTaskQueue = []
+        const consumeQueue = (queue) => {
+            if (queue.length) {
+                queue.forEach((fn) => fn())
+                queue.length = 0
+            }
+            runMicroTaskQueue()
+        }
+        const runMicroTasks = () => {
+            if (microTaskQueue.length) {
+                microTaskQueue.forEach((fn) => fn())
+                microTaskQueue.length = 0
+            }
+        }
+        const runPoll = () => {
+            while ((checkCallbackQueue.length == 0 && timersCallbackQueue.length == 0)  || pollCallbackQueue.length) {
+                consumeQueue(pollCallbackQueue)
+            }
+        }
+        const eventLoop = () => {
+            while (true) {
+                consumeQueue(timersCallbackQueue)
+                runPoll()
+                consumeQueue(checkCallbackQueue)
+                consumeQueue(closeCallbackQueue)
+            }
+        }
+        ```
