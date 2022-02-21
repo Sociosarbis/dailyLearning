@@ -133,6 +133,52 @@
     微任务利用在同步代码后才执行的特性，可以`batch`数据更新的操作，并且由于它能先于`UI`重新`render`执行，所以又能让`UI`实时显示最新的改动。
 
 
+6. `==`逻辑
+```javascript
+function notStrictlyEqual(a, b) {
+  let typeA = typeof a
+  let typeB = typeof b
+  if (typeA !== typeB) {
+    if (typeA === 'boolean') {
+      a = Number(a)
+      typeA = 'number'
+    } else if (typeB === 'boolean') {
+      b = Number(b)
+      typeB = 'number'
+    }
+
+    if (a && typeA === 'object') {
+      if (['string', 'number'].includes(typeB)) {
+        a = a.valueOf()
+        if (typeof a === 'object') {
+          a = a.toString()
+        }
+      }
+    }
+
+    if (b && typeB === 'object') {
+      if (['string', 'number'].includes(typeA)) {
+        b = b.valueOf()
+        if (typeof b === 'object') {
+          b = b.toString()
+        }
+      }
+    }
+
+    typeA = typeof a
+    typeB = typeof b
+
+    if (typeA === 'string' && typeB === 'number') {
+      a = Number(a)
+    } else if (typeA === 'number' && typeB === 'string') {
+      b = Number(b)
+    }
+  }
+  return a === b
+}
+```
+
+
 ### Framework
 1. `Vue`不需要`time slicing（时间切片）`的原因：
   1. 只有当框架更新调度的`CPU`用时经常超过`100ms`才能发挥用处。
