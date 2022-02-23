@@ -1,0 +1,1 @@
+[排列组合的一些公式及推导](https://www.cnblogs.com/1024th/p/10623541.html)
