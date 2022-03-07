@@ -311,6 +311,15 @@ function notStrictlyEqual(a, b) {
         2. 为`vnode`添加`patchFlag`，标记它是否需要的`patch`类型
         3. 将`children`分为`static`和`dynaimic`，只对`dynamic`的进行比对更新
 
+### webpack
+1. 工作流程
+
+    1. 初始化`compiler`，包括处理`entryOptions`，配置内部`plugins`和`resolvers`
+    2. 开始运行，创建`normalModuleFactory`和`contextModuleFactory`（用于生成`require.context`的依赖），把二者作为参数创建`compilation`对象
+    3. 从入口文件开始使用`loader`把各类文件转换成`webpack`的`js`解析器（`acorn`）支持的`js`并生成`module`对象
+    4. 把`module`交给解析器转换成`ast`，然后将依赖添加到各个`module`上并递归地`resolve`依赖重复第3步
+    5. 所有`module`解析完成以后，根据依赖图进行拓扑排序逐个`render`出`module`的代码并将它们合并为`chunk`
+
 ### node
 1. 事件循环
 
