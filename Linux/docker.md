@@ -25,3 +25,15 @@ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' red
 ```bash
 cat path/to/sql_file | docker exec -i -e PGPASSOWRD=<password> <container_name> psql -U <user_name> -d <database_name>
 ```
+
+#### 利用buildkit缓存下载的包
+```bash
+# 开启buildkit
+DOCKER_BUILDKIT=1 docker build ...
+
+# dockerfile的RUN命令，cache类型是把target路径下的文件缓存到host和把缓存挂载到该路径
+RUN --mount=type=cache,target=<path/to/mount> ...
+
+# bind类型是挂载其他镜像，build stage或者是当前build context的路径，加上rw表示允许写入
+RUN --mount=type=bind,[from=[build-stage],source=<path/from/from>,]target=<path/to/mount>,rw
+```
